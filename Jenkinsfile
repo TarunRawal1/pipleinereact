@@ -1,8 +1,8 @@
-Pipeline{
+pipeline{
     any agent
     {
-        Stages{
-            Stage("Build"){
+        stages{
+            stage('Build'){
                 agent{
                     docker{
                         image 'node:18-alpine'
@@ -15,7 +15,7 @@ Pipeline{
                     '''
                 }
             }
-            Stage("Test"){
+            stage('Test'){
                 agent{
                     docker{
                         image 'node:18-alpine'
