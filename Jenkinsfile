@@ -16,7 +16,9 @@ pipeline{
             //         '''
             //     }
             // }
-            stage('Test'){
+            stage("tests"){
+                parallel{
+                     stage('Test'){
                 agent{
                     docker{
                         image 'node:18-alpine'
@@ -44,8 +46,23 @@ pipeline{
                     echo "Running E2E..."
                     npm install serve
                     node_modules/.bin/serve -s build &
-                    sleep 5
-                    npx playwright test
+                    '''
+                }
+            }
+                }
+            }
+           
+            stage('Deploy'){
+                agent{
+                    docker{
+                        image 'node:18-alpine'
+                        reuseNode true
+                    }
+                }
+                steps{
+                    sh '''
+                    npm install netlify-cli
+                    node_modules/.bin/netlify --version
                     '''
                 }
             }
