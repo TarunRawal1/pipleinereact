@@ -81,7 +81,7 @@ pipeline{
                     }
                 }
                 steps{
-                     timeout(time:"1",unit:"MINUTES"){
+                     timeout(time:1,unit:"MINUTES"){
                         input message: 'Are you sure you want to deploy to production?', ok: 'Deploy'
                     }
                     sh '''
