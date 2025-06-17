@@ -86,6 +86,9 @@ pipeline{
                     node_modules/.bin/netlify --version
                     node_modules/.bin/netlify status
                     echo 'Deploying to PROD environment...'
+                    timeout(time:"1",units:"MINUTES"){
+                        input message: 'Are you sure you want to deploy to production?', ok: 'Deploy'
+                    }
                     node_modules/.bin/netlify deploy --dir=build --prod
                     '''
                 }
