@@ -69,7 +69,7 @@ pipeline{
                     echo 'Deploying to STG environment...'
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --json > deploye-output.json
-                    node_modules/.bin/node-jq -r '.deploy_id' deploye-output.json 
+                    node_modules/.bin/node-jq -r '.deploy_url' deploy-output.json 
                     '''
                 }
             }
