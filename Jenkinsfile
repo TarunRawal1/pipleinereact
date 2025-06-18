@@ -64,11 +64,12 @@ pipeline{
                 }
                 steps{
                     sh '''
-                    npm install netlify-cli@20.1.1
+                    npm install netlify-cli@20.1.1 node-jq
                     node_modules/.bin/netlify --version
                     echo 'Deploying to STG environment...'
                     node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build 
+                    node_modules/.bin/netlify deploy --dir=build --json > deploye-output.json
+                    node_modules/.bin/node-jq -r '.deploy_id' deploye-output.json 
                     '''
                 }
             }
