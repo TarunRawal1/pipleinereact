@@ -40,6 +40,7 @@ pipeline{
                     echo "Running tests..."
                     npm install
                     npm test
+
                     '''
                 }
             }
@@ -72,7 +73,7 @@ pipeline{
                     netlify --version
                     echo 'Deploying to STG environment...'
                     netlify status
-                    netlify deploy --dir=build --json > deploye-output.json
+                    netlify deploy --dir=build --json > deploy-output.json
                     node-jq -r '.deploy_url' deploy-output.json 
                     '''
                 }
