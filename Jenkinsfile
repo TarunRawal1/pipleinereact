@@ -3,23 +3,29 @@ pipeline{
     environment{
         NETLIFY_SITE_ID = '9d6c5b3b-1db3-4176-aaee-c18ae360950a'
         NETLIFY_AUTH_TOKEN = credentials('jenkins')
+        REACT_APP_VERSION = '1.0.0'
     }
         stages{
-            // stage('Build'){
-            //     agent{
-            //         docker{
-            //             image 'node:18-alpine'
-            //             reuseNode true
-            //         }
-            //     }
-            //     steps{
-            //         sh '''
-            //         echo "Building the application..."
-            //         npm install
-            //         npm run build
-            //         '''
-            //     }
-            // }
+            stage("docker"){
+                steps{
+                    sh 'docker build -t react-app .'
+                }
+            }
+            stage('Build'){
+                agent{
+                    docker{
+                        image 'node:18-alpine'
+                        reuseNode true
+                    }
+                }
+                steps{
+                    sh '''
+                    echo "Building the application..."
+                    npm install
+                    npm run build
+                    '''
+                }
+            }
             stage("tests"){
                 parallel{
                      stage('Test'){
@@ -33,7 +39,6 @@ pipeline{
                     sh '''
                     echo "Running tests..."
                     npm install
-                    npm run build
                     npm test
                     '''
                 }
@@ -58,7 +63,7 @@ pipeline{
             stage('Deploy STG'){
                 agent{
                     docker{
-                        image 'node:18-alpine'
+                        image 'mcr.microsoft.com/playwright:v1.53.0-noble'
                         reuseNode true
                     }
                 }
@@ -82,9 +87,6 @@ pipeline{
                     }
                 }
                 steps{
-                     timeout(time:1,unit:"MINUTES"){
-                        input message: 'Are you sure you want to deploy to production?', ok: 'Deploy'
-                    }
                     sh '''
                     npm install netlify-cli@20.1.1
                     node_modules/.bin/netlify --version
