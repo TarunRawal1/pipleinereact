@@ -11,28 +11,7 @@ pipeline{
                     sh 'docker build -t react-app .'
                 }
             }
-            stage("aws"){
-                agent{
-                    docker{
-                        image 'amazon/aws-cli'
-                        args '--entrypoint=""'
-                    }
-                }
-                environment{
-                    AWS_S3_BUCKET = 'jenkinspracbucket'
-                }
-                steps{
-                    withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                        sh '''
-                        aws --version
-                        echo "Configuring AWS CLI..." > index.html
-                        aws s3 cp index.html s3://${AWS_S3_BUCKET}/index.html
-                        echo "Configuring AWS CLI..."
-                        '''
-                           }
-                    
-                }
-            }
+           
             stage('Build'){
                 agent{
                     docker{
@@ -46,6 +25,27 @@ pipeline{
                     npm install
                     npm run build
                     '''
+                }
+            }
+             stage("aws"){
+                agent{
+                    docker{
+                        image 'amazon/aws-cli'
+                        args '--entrypoint=""'
+                    }
+                }
+                environment{
+                    AWS_S3_BUCKET = 'jenkinspracbucket'
+                }
+                steps{
+                    withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                        sh '''
+                        aws --version
+                        echo "Configuring AWS CLI..."
+                        aws s3 sync build s3://${AWS_S3_BUCKET}
+                        '''
+                           }
+                    
                 }
             }
             stage("tests"){
