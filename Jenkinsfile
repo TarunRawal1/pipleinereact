@@ -3,7 +3,7 @@ pipeline{
     environment{
         NETLIFY_SITE_ID = '9d6c5b3b-1db3-4176-aaee-c18ae360950a'
         NETLIFY_AUTH_TOKEN = credentials('jenkins')
-        REACT_APP_VERSION = '1.0.0'
+        
     }
         stages{
             stage("docker"){
@@ -19,9 +19,14 @@ pipeline{
                     }
                 }
                 steps{
-                    sh '''
-                    aws --version
-                    '''
+                    withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                        sh '''
+                        aws --version
+                        aws s3 ls
+                        echo "Configuring AWS CLI..."
+                        '''
+                           }
+                    
                 }
             }
             stage('Build'){
