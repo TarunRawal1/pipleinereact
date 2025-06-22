@@ -11,6 +11,19 @@ pipeline{
                     sh 'docker build -t react-app .'
                 }
             }
+            stage("aws"){
+                agent{
+                    docker{
+                        image 'amazon/aws-cli'
+                        args '--entrypoint=""'
+                    }
+                }
+                steps{
+                    sh '''
+
+                    '''
+                }
+            }
             stage('Build'){
                 agent{
                     docker{
@@ -47,7 +60,7 @@ pipeline{
             stage('E2E'){
                 agent{
                     docker{
-                        image 'mcr.microsoft.com/playwright:v1.53.0-noble'
+                        image 'react-app'
                         reuseNode true
                     }
                 }
@@ -55,7 +68,7 @@ pipeline{
                     sh '''
                     echo "Running E2E..."
                     npm install serve
-                    node_modules/.bin/serve -s build &
+                    serve -s build &
                     '''
                 }
             }
