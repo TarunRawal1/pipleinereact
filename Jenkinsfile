@@ -8,7 +8,7 @@ pipeline{
         stages{
             stage("docker"){
                 steps{
-                    sh 'docker build -t react-app .'
+                    sh 'docker build -f ci/Dockerfile -t react-app .'
                 }
             }
            
@@ -27,6 +27,15 @@ pipeline{
                     '''
                 }
             }
+            stage('Build Docker'){
+                steps{
+                    sh '''
+                    echo "Building Docker image..."
+                    docker build -t jenkins-appNew .
+                    '''
+                }
+            }
+
              stage("aws"){
                 agent{
                     docker{
